@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.local
+
+# Model outputs (too large for git — store on HF Hub)
+outputs/
+
+# Evaluation artefacts
+eval_results.json
+eval_results.md
+training.log
+
+# SaaS — usage databases (contain PII)
+*.db
+medscribe_usage.db
+
+# Experiment tracking
+wandb/
+
+# Next.js
+ui/.next/
+ui/node_modules/
+ui/out/
+
+# OS
+.DS_Store
+*.swp

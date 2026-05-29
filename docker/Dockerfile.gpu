@@ -1,0 +1,39 @@
+# MedScribe AI — GPU Inference Server
+# Target: RunPod / Vast.ai with RTX 3090/4090
+# Build: docker build -f docker/Dockerfile.gpu -t medscribe-gpu .
+# Run:   docker run --gpus all -p 8000:8000 --env-file .env medscribe-gpu
+
+FROM nvidia/cuda:12.1.1-devel-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# System deps
+RUN apt-get update && apt-get install -y \
+    python3.11 python3.11-dev python3-pip \
+    curl git build-essential \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python deps (GPU-enabled)
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir vllm>=0.4.0
+
+# Copy server code
+COPY serve.py .
+COPY .env* ./
+
+EXPOSE 8000
+
+ENV INFERENCE_ENGINE=vllm
+ENV MODEL_PATH=./outputs/mistral-medical-merged
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+CMD ["python", "serve.py", "--engine", "vllm", "--port", "8000"]

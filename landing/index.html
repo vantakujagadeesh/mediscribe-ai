@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScribe AI — AI-Powered SOAP Notes for Clinicians</title>
+    <meta name="description" content="Convert clinical dictations into structured SOAP notes in seconds. Save 2-3 hours daily with AI-powered medical documentation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0e1a;
+            --surface: #111827;
+            --card: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.08);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --accent: #06b6d4;
+            --gradient: linear-gradient(135deg, #1e40af, #3b82f6, #06b6d4);
+            --glow: 0 0 40px rgba(59,130,246,0.15);
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ─── Nav ─── */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(10,14,26,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+        }
+        .nav-inner {
+            max-width: 1200px; margin: auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-size: 1.4rem; font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-links a {
+            color: var(--text-muted); text-decoration: none;
+            margin-left: 2rem; font-weight: 500; font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: #fff; }
+        .nav-cta {
+            background: var(--gradient) !important;
+            -webkit-text-fill-color: #fff !important;
+            color: #fff !important;
+            padding: 0.5rem 1.2rem; border-radius: 8px;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            justify-content: center; text-align: center;
+            padding: 8rem 2rem 4rem;
+            background:
+                radial-gradient(ellipse 60% 50% at 50% 0%, rgba(59,130,246,0.12), transparent),
+                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(6,182,212,0.08), transparent);
+        }
+        .hero-content { max-width: 800px; }
+        .badge {
+            display: inline-block;
+            background: rgba(59,130,246,0.15); color: var(--primary-light);
+            border: 1px solid rgba(59,130,246,0.3);
+            padding: 0.4rem 1rem; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(59,130,246,0.1); }
+            50% { box-shadow: 0 0 25px rgba(59,130,246,0.25); }
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800; line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        .hero h1 span {
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
+        .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 2rem; border-radius: 12px;
+            font-weight: 600; font-size: 1rem;
+            text-decoration: none; transition: all 0.3s;
+            cursor: pointer; border: none;
+        }
+        .btn-primary {
+            background: var(--gradient); color: #fff;
+            box-shadow: 0 4px 25px rgba(59,130,246,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 35px rgba(59,130,246,0.45); }
+        .btn-outline {
+            background: transparent; color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { border-color: var(--primary); background: rgba(59,130,246,0.05); }
+
+        /* ─── Stats ─── */
+        .stats {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; max-width: 800px; margin: 3rem auto 0;
+        }
+        .stat {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.2rem; text-align: center;
+        }
+        .stat-num { font-size: 2rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+        /* ─── Section ─── */
+        section { padding: 6rem 2rem; }
+        .section-inner { max-width: 1100px; margin: auto; }
+        .section-title {
+            text-align: center; font-size: 2.2rem; font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .section-sub { text-align: center; color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        /* ─── Features ─── */
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--glow);
+        }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .feature-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        /* ─── Demo ─── */
+        .demo-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden;
+            max-width: 900px; margin: auto;
+            box-shadow: var(--glow);
+        }
+        .demo-header {
+            background: rgba(59,130,246,0.08);
+            padding: 0.8rem 1.2rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .demo-body { display: grid; grid-template-columns: 1fr 1fr; }
+        .demo-panel { padding: 1.5rem; font-size: 0.9rem; line-height: 1.8; }
+        .demo-panel:first-child { border-right: 1px solid var(--border); }
+        .demo-label {
+            font-weight: 700; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--primary-light); margin-bottom: 0.8rem;
+        }
+        .demo-panel pre { white-space: pre-wrap; color: var(--text-muted); }
+        .soap-section { color: var(--accent); font-weight: 600; }
+
+        /* ─── Pricing ─── */
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem; align-items: start;
+        }
+        .price-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2.5rem 2rem;
+            text-align: center; transition: all 0.3s; position: relative;
+        }
+        .price-card.featured {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.05);
+            box-shadow: 0 0 50px rgba(59,130,246,0.1);
+            transform: scale(1.03);
+        }
+        .price-badge {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gradient); color: #fff;
+            padding: 0.3rem 1.2rem; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        }
+        .price-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .price-amount {
+            font-size: 3rem; font-weight: 800; margin: 1rem 0;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .price-amount span { font-size: 1rem; font-weight: 500; -webkit-text-fill-color: var(--text-muted); }
+        .price-features { list-style: none; margin: 1.5rem 0; text-align: left; }
+        .price-features li {
+            padding: 0.5rem 0; color: var(--text-muted);
+            font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .price-features li::before { content: "✓"; color: var(--accent); font-weight: 700; }
+        .price-card .btn { width: 100%; justify-content: center; margin-top: 1rem; }
+
+        /* ─── FAQ ─── */
+        .faq-list { max-width: 700px; margin: auto; }
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+        }
+        .faq-q {
+            font-weight: 600; font-size: 1.05rem; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-q::after { content: "+"; font-size: 1.5rem; color: var(--primary-light); transition: transform 0.3s; }
+        .faq-item.open .faq-q::after { transform: rotate(45deg); }
+        .faq-a {
+            color: var(--text-muted); font-size: 0.95rem;
+            max-height: 0; overflow: hidden; transition: max-height 0.3s;
+            padding-top: 0;
+        }
+        .faq-item.open .faq-a { max-height: 300px; padding-top: 0.8rem; }
+
+        /* ─── Footer ─── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem; text-align: center;
+            color: var(--text-muted); font-size: 0.9rem;
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .demo-body { grid-template-columns: 1fr; }
+            .demo-panel:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+            .nav-links { display: none; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .price-card.featured { transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <div class="nav-inner">
+        <div class="logo">🩺 MedScribe AI</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#demo">Demo</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#faq">FAQ</a>
+            <a href="#pricing" class="nav-cta">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="badge">🚀 Powered by Fine-Tuned Mistral-7B</div>
+        <h1>Clinical Dictations to<br><span>SOAP Notes</span> in Seconds</h1>
+        <p>Stop spending 2-3 hours daily on documentation. MedScribe AI converts your clinical notes into structured SOAP format using medical-grade AI.</p>
+        <div class="hero-btns">
+            <a href="#pricing" class="btn btn-primary">Start Free Trial →</a>
+            <a href="#demo" class="btn btn-outline">See Demo ↓</a>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="stat-num">&lt;500ms</div><div class="stat-label">Average Latency</div></div>
+            <div class="stat"><div class="stat-num">+18.4%</div><div class="stat-label">ROUGE-L Improvement</div></div>
+            <div class="stat"><div class="stat-num">10K+</div><div class="stat-label">Medical QA Training Pairs</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+    <div class="section-inner">
+        <h2 class="section-title">Why Clinicians Choose MedScribe</h2>
+        <p class="section-sub">Built by doctors, for doctors. Every feature designed to save you time.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Sub-500ms Response</h3>
+                <p>vLLM-powered inference delivers structured SOAP notes faster than you can type them.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Medical-Grade AI</h3>
+                <p>Fine-tuned on 10,000+ medical Q&A pairs with QLoRA. 25.6% lower perplexity than base model.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>HIPAA-Ready Design</h3>
+                <p>Data never stored. End-to-end encrypted. Self-hostable on your own infrastructure.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Perfect SOAP Format</h3>
+                <p>Subjective, Objective, Assessment, Plan — every note follows clinical documentation standards.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🏥</div>
+                <h3>Multi-Seat Clinic Plans</h3>
+                <p>Share a single subscription across your entire practice. Central billing, individual usage tracking.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔌</div>
+                <h3>API Access</h3>
+                <p>RESTful API with OpenAPI docs. Integrate MedScribe into your existing EHR workflow.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Demo -->
+<section id="demo" style="background: rgba(59,130,246,0.03);">
+    <div class="section-inner">
+        <h2 class="section-title">See It In Action</h2>
+        <p class="section-sub">Paste a clinical dictation, get a structured SOAP note instantly.</p>
+        <div class="demo-box">
+            <div class="demo-header">
+                <div class="demo-dot" style="background:#ef4444;"></div>
+                <div class="demo-dot" style="background:#f59e0b;"></div>
+                <div class="demo-dot" style="background:#22c55e;"></div>
+                <span style="margin-left:0.5rem;font-size:0.85rem;color:var(--text-muted);">MedScribe AI — Live Demo</span>
+            </div>
+            <div class="demo-body">
+                <div class="demo-panel">
+                    <div class="demo-label">📝 Clinical Dictation (Input)</div>
+                    <pre>45-year-old male presents with 3-day history of productive cough, fever 101.2°F, and right-sided chest pain worse with deep inspiration. PMH: Type 2 DM, HTN. Meds: Metformin 1000mg BID, Lisinopril 20mg daily. Vitals: BP 138/88, HR 96, RR 22, SpO2 94% on RA. Lung exam: decreased breath sounds and crackles RLL. CXR shows RLL infiltrate.</pre>
+                </div>
+                <div class="demo-panel">
+                    <div class="demo-label">📋 SOAP Note (Output)</div>
+                    <pre><span class="soap-section">S (Subjective):</span>
+45M c/o 3-day productive cough, fever, R-sided pleuritic chest pain. PMH: T2DM, HTN.
+
+<span class="soap-section">O (Objective):</span>
+VS: BP 138/88, HR 96, RR 22, SpO2 94% RA, T 101.2°F. Lungs: ↓ BS + crackles RLL. CXR: RLL infiltrate.
+
+<span class="soap-section">A (Assessment):</span>
+Community-acquired pneumonia (CAP), RLL. DDx: PE, empyema.
+
+<span class="soap-section">P (Plan):</span>
+1. Amoxicillin-clavulanate 875/125 BID × 7d
+2. Blood cultures × 2, CBC, BMP, procalcitonin
+3. Supplemental O2 to keep SpO2 ≥95%
+4. Follow-up 48-72h or sooner if worsening</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing">
+    <div class="section-inner">
+        <h2 class="section-title">Simple, Transparent Pricing</h2>
+        <p class="section-sub">Start saving hours today. Cancel anytime.</p>
+        <div class="pricing-grid">
+            <div class="price-card">
+                <h3>Starter</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem;">For solo practitioners</p>
+                <div class="price-amount">₹999<span>/mo</span></div>
+                <ul class="price-features">
+                    <li>200 SOAP notes/month</li>
+                    <li>Sub-500ms generation</li>
+                    <li>Copy-to-clipboard</li>
+                    <li>Email support</li>
+                    <li>API access</li>
+                </ul>
+                <a href="https://medscribe.lemonsqueezy.com/checkout/starter" class="btn btn-outline">Get Started</a>
+            </div>
+            <div class="price-card featured">
+                <div class="price-badge">Most Popular</div>
+                <h3>Professional</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem;">For busy clinicians</p>
+                <div class="price-amount">₹2,499<span>/mo</span></div>
+                <ul class="price-features">
+                    <li>Unlimited SOAP notes</li>
+                    <li>Priority inference queue</li>
+                    <li>Usage analytics dashboard</li>
+                    <li>Priority email support</li>
+                    <li>Full API access</li>
+                    <li>Custom SOAP templates</li>
+                </ul>
+                <a href="https://medscribe.lemonsqueezy.com/checkout/professional" class="btn btn-primary">Get Started →</a>
+            </div>
+            <div class="price-card">
+                <h3>Clinic Pack</h3>
+                <p style="color:var(--text-muted);font-size:0.9rem;">For multi-doctor practices</p>
+                <div class="price-amount">₹5,999<span>/mo</span></div>
+                <ul class="price-features">
+                    <li>5 seats included</li>
+                    <li>Unlimited SOAP notes</li>
+                    <li>Central billing dashboard</li>
+                    <li>Dedicated Slack support</li>
+                    <li>Custom integrations</li>
+                    <li>SLA guarantee</li>
+                </ul>
+                <a href="https://medscribe.lemonsqueezy.com/checkout/clinic" class="btn btn-outline">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: rgba(59,130,246,0.03);">
+    <div class="section-inner">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-q">Is my patient data stored on your servers?</div>
+                <div class="faq-a">No. MedScribe AI processes text in real-time and does not persist any clinical data. Input and output are discarded after each request.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What AI model powers MedScribe?</div>
+                <div class="faq-a">MedScribe uses a fine-tuned Mistral-7B-Instruct-v0.2 model, trained on 10,000+ medical Q&A pairs using QLoRA (4-bit quantization). It achieves +18.4% ROUGE-L improvement over the base model.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Can I integrate MedScribe into my EHR system?</div>
+                <div class="faq-a">Yes. Professional and Clinic plans include full REST API access with OpenAPI documentation. POST your clinical text, get structured SOAP notes back as JSON.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">What happens if I exceed my note limit?</div>
+                <div class="faq-a">You'll receive a notification when approaching your limit. Upgrade to Professional (unlimited) anytime — your existing notes and data remain intact.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Is there a free trial?</div>
+                <div class="faq-a">Yes! Every new account gets 20 free SOAP notes to evaluate the quality before committing to a paid plan.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">Can I self-host MedScribe?</div>
+                <div class="faq-a">Enterprise customers can deploy MedScribe on their own GPU infrastructure using our Docker images. Contact us for details.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="logo" style="margin-bottom:1rem;display:inline-block;">🩺 MedScribe AI</div>
+    <p>AI-powered clinical documentation for modern healthcare.</p>
+    <p style="margin-top:0.5rem;">© 2026 MedScribe AI. All rights reserved.</p>
+    <p style="margin-top:1rem;font-size:0.8rem;">
+        <a href="#" style="color:var(--primary-light);text-decoration:none;">Privacy Policy</a> ·
+        <a href="#" style="color:var(--primary-light);text-decoration:none;">Terms of Service</a> ·
+        <a href="mailto:support@medscribe.ai" style="color:var(--primary-light);text-decoration:none;">Contact</a>
+    </p>
+</footer>
+
+<script>
+    // FAQ Accordion
+    document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            document.querySelectorAll('.faq-item').forEach(i => {
+                if (i !== item) i.classList.remove('open');
+            });
+            item.classList.toggle('open');
+        });
+    });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // Animate elements on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .price-card, .stat').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'all 0.6s ease';
+        observer.observe(el);
+    });
+</script>
+</body>
+</html>
