@@ -173,10 +173,10 @@ Training metrics tracked:
 - Swap dataset to **legal** (pile-of-law) or **finance** (fingpt-sentiment) by changing `DATASET_NAME`
 - Try **DPO** (Direct Preference Optimization) after SFT for RLHF-style alignment
 - Add **LangSmith** tracing to the serve.py endpoint for production monitoring
-- Build a **Streamlit UI** wrapper around serve.py for a demo app
+
 
 ---
 
 ## Author
 
-[Vantaku Jagadeesh](https://linkedin.com/in/your-profile) · B.Tech CS (Data Science & AI) · CSVTU 2026
+[Vantaku Jagadeesh](https://linkedin.com/in/your-profile) · B.Tech CS (Data Science & AI) · nit Raipur
